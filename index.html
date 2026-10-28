@@ -339,7 +339,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
@@ -392,17 +392,26 @@
             flex-wrap: wrap;
         }
 
-        .mensalidade-sections {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+        .select-status-pago {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+            border: 1px solid #ccc;
         }
 
-        @media (max-width: 768px) {
-            .mensalidade-sections {
-                grid-template-columns: 1fr;
-            }
+        .select-status-pago.pago {
+            background-color: #e8f5e9;
+            color: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .select-status-pago.pendente {
+            background-color: #ffebee;
+            color: var(--danger-red);
+            border-color: var(--danger-red);
         }
 
         @media (max-width: 600px) {
@@ -450,7 +459,7 @@
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'giras')">📅 Giras Semanais</button>
             <button class="tab-btn" onclick="switchTab(event, 'filas')">📋 Lista de Visitantes</button>
-            <button class="tab-btn" onclick="switchTab(event, 'festas')">🎉 Festas</button>
+            <button class="tab-btn" onclick="switchTab(event, 'festas')">🎉 Festas & Eventos</button>
             <button class="tab-btn" onclick="switchTab(event, 'filhos')">🌿 Filhos de Santo</button>
             <button class="tab-btn" onclick="switchTab(event, 'mensalidades')">💰 Mensalidades</button>
             <button class="tab-btn" onclick="switchTab(event, 'estoque')">📦 Estoque</button>
@@ -475,6 +484,10 @@
                         <label>Horário de Início</label>
                         <input type="time" id="giraHora" class="form-control" value="20:00">
                     </div>
+                    <div class="form-group">
+                        <label>Dirigente / Observação (Opcional)</label>
+                        <input type="text" id="giraObs" class="form-control" placeholder="Ex: Passe e Amaci">
+                    </div>
                     <div class="form-group" style="justify-content: flex-end;">
                         <button type="submit" class="btn btn-primary">➕ Cadastrar Gira</button>
                     </div>
@@ -490,6 +503,7 @@
                                 <th>Data</th>
                                 <th>Horário</th>
                                 <th>Gira / Linha</th>
+                                <th>Observações</th>
                                 <th>Presentes Registrados</th>
                                 <th>Ações</th>
                             </tr>
@@ -500,7 +514,7 @@
             </div>
         </div>
 
-        <!-- ABA 1: LISTA DE VISITANTES -->
+        <!-- ABA 1: LISTA DE VISITANTES DA GIRA -->
         <div id="filas" class="tab-content">
             <div class="card">
                 <div class="card-title">
@@ -522,7 +536,7 @@
                         <input type="text" id="cTel" class="form-control" placeholder="(11) 99999-9999">
                     </div>
                     <div class="form-group" style="justify-content: flex-end;">
-                        <button type="submit" class="btn btn-primary">✍️ Registar Presença</button>
+                        <button type="submit" class="btn btn-primary">✍️ Registrar Presença</button>
                     </div>
                 </form>
             </div>
@@ -553,7 +567,7 @@
             </div>
         </div>
 
-        <!-- ABA 2: FESTAS -->
+        <!-- ABA 2: FESTAS & EVENTOS -->
         <div id="festas" class="tab-content">
             <div class="card">
                 <div class="card-title">Registar Nova Festa / Homenagem</div>
@@ -570,11 +584,7 @@
                         <label>Data Prevista</label>
                         <input type="date" id="festaData" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label>Horário da Festa</label>
-                        <input type="time" id="festaHora" class="form-control" value="18:00" required>
-                    </div>
-                    <div class="form-group" style="justify-content: flex-end; grid-column: span 2;">
+                    <div class="form-group" style="justify-content: flex-end;">
                         <button type="submit" class="btn btn-primary">🎉 Cadastrar Festa</button>
                     </div>
                 </form>
@@ -584,7 +594,7 @@
                 <div class="card-title">Resumo Financeiro dos Eventos</div>
                 <div class="dashboard-grid">
                     <div class="dash-card">
-                        <div class="title">Total Arrecadado (Entradas)</div>
+                        <div class="title">Total Arrecadado (Doações/Rifas)</div>
                         <div class="value" id="dashFestaArrecadado" style="color: var(--success-green);">R$ 0,00</div>
                     </div>
                     <div class="dash-card">
@@ -592,10 +602,36 @@
                         <div class="value" id="dashFestaCustos" style="color: var(--danger-red);">R$ 0,00</div>
                     </div>
                     <div class="dash-card">
-                        <div class="title">Saldo Geral das Festas</div>
+                        <div class="title">Saldo Geral dos Eventos</div>
                         <div class="value" id="dashFestaSaldo">R$ 0,00</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- REGISTRO DE PRESENÇA EM FESTAS -->
+            <div class="card">
+                <div class="card-title">
+                    <span>📋 Lista de Presença da Festa</span>
+                </div>
+                <form id="formPresencaFesta" class="form-grid" onsubmit="adicionarPresencaFesta(event)">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Selecione a Festa *</label>
+                        <select id="pfFestaId" class="form-control" required onchange="renderFestas()">
+                            <option value="">-- Selecione uma Festa Cadastrada --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Convidado / Visitante *</label>
+                        <input type="text" id="pfNome" class="form-control" required placeholder="Ex: Ana Maria">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="text" id="pfTel" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">✍️ Confirmar Presença</button>
+                    </div>
+                </form>
             </div>
 
             <div class="card">
@@ -623,7 +659,7 @@
                     </div>
                     <div class="form-group">
                         <label>Mensalidade (R$)</label>
-                        <input type="number" id="fValor" class="form-control" value="50">
+                        <input type="number" id="fValor" class="form-control" value="50" step="0.01">
                     </div>
                     <div class="form-group" style="justify-content: flex-end;">
                         <button type="submit" class="btn btn-primary">Cadastrar Filho</button>
@@ -685,44 +721,23 @@
                     </div>
                 </div>
 
-                <div class="mensalidade-sections">
-                    <!-- Filhos que já Pagaram -->
-                    <div>
-                        <h4 style="color: var(--success-green); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                            ✅ Pagamentos Efetuados no Mês
-                        </h4>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Filho de Santo</th>
-                                        <th>Valor</th>
-                                        <th>Data Transferência</th>
-                                        <th>Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblMensalidadesPagos"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Filhos Pendentes -->
-                    <div>
-                        <h4 style="color: var(--danger-red); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                            ⏳ Filhos Faltantes / Pendentes
-                        </h4>
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Filho de Santo</th>
-                                        <th>Valor</th>
-                                        <th>Registrar Pagamento</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblMensalidadesPendentes"></tbody>
-                            </table>
-                        </div>
+                <!-- LISTAGEM COMPLETA DE MENSALIDADES -->
+                <div style="margin-top: 15px;">
+                    <h4 style="color: var(--primary-green-dark); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📋 Lista Geral de Mensalidades dos Filhos de Santo</span>
+                    </h4>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Filho de Santo</th>
+                                    <th>Telefone</th>
+                                    <th>Valor Mensal</th>
+                                    <th>Status do Pagamento</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblMensalidadesUnificada"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -834,6 +849,7 @@
             renderGirasSemanais();
             popularSelectGiras();
             renderConsulentes();
+            popularSelectFestas();
             renderFestas();
             renderFilhos();
             renderMensalidades();
@@ -856,17 +872,20 @@
             const nome = document.getElementById('giraNome').value;
             const data = document.getElementById('giraData').value;
             const hora = document.getElementById('giraHora').value;
+            const obs = document.getElementById('giraObs').value;
 
             const novaGira = {
                 id: Date.now(),
                 nome: nome,
                 data: data,
-                hora: hora
+                hora: hora,
+                obs: obs
             };
 
             appState.girasSemanais.push(novaGira);
 
             document.getElementById('giraNome').value = '';
+            document.getElementById('giraObs').value = '';
             saveData();
             
             document.getElementById('cGiraId').value = novaGira.id;
@@ -887,7 +906,7 @@
             const girasOrdenadas = [...appState.girasSemanais].sort((a,b) => b.data.localeCompare(a.data));
 
             if(girasOrdenadas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Nenhuma gira cadastrada. Agende a primeira gira no formulário acima!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhuma gira cadastrada. Agende a primeira gira no formulário acima!</td></tr>';
                 return;
             }
 
@@ -900,6 +919,7 @@
                         <td><strong>${dataFmt}</strong></td>
                         <td>${gira.hora || '--:--'}</td>
                         <td><strong>${gira.nome}</strong></td>
+                        <td>${gira.obs || '-'}</td>
                         <td><span class="badge badge-green">${totalPresentes} Pessoas</span></td>
                         <td>
                             <button class="btn btn-primary btn-sm" onclick="irParaPresencaGira(${gira.id})">📝 Dar Presenças</button>
@@ -1039,140 +1059,160 @@
             });
         }
 
-        /* --- LOGICA: FESTAS --- */
+        /* --- LOGICA: FESTAS & EVENTOS --- */
         function adicionarFesta(e) {
             e.preventDefault();
             const nome = document.getElementById('festaNome').value;
             const orixa = document.getElementById('festaOrixa').value;
             const data = document.getElementById('festaData').value;
-            const hora = document.getElementById('festaHora').value;
 
-            appState.festas.push({
+            const novaFesta = {
                 id: Date.now(),
                 nome: nome,
                 orixa: orixa,
                 data: data,
-                hora: hora,
-                presencas: [],
-                despesas: []
-            });
+                lancamentos: [],
+                presencas: []
+            };
+
+            appState.festas.push(novaFesta);
 
             document.getElementById('festaNome').value = '';
             document.getElementById('festaOrixa').value = '';
             saveData();
+            
+            document.getElementById('pfFestaId').value = novaFesta.id;
+            renderFestas();
         }
 
         function removerFesta(id) {
-            if(confirm("Deseja mesmo remover esta festa e todo seu histórico?")) {
+            if(confirm("Deseja mesmo remover esta festa e todo seu histórico financeiro e de presença?")) {
                 appState.festas = appState.festas.filter(x => x.id !== id);
                 saveData();
             }
         }
 
-        function adicionarPresencaFesta(e, festaId) {
-            e.preventDefault();
-            const nome = document.getElementById(`festaNomePresenca_${festaId}`).value;
-            const valor = parseFloat(document.getElementById(`festaValorPresenca_${festaId}`).value) || 0;
+        function popularSelectFestas() {
+            const select = document.getElementById('pfFestaId');
+            if(!select) return;
+            const valAtual = select.value;
+            select.innerHTML = '<option value="">-- Selecione uma Festa Cadastrada --</option>';
 
-            const festa = appState.festas.find(f => f.id === festaId);
+            const festasOrdenadas = [...appState.festas].sort((a,b) => (b.data || '').localeCompare(a.data || ''));
+
+            festasOrdenadas.forEach(f => {
+                const dataFmt = f.data ? f.data.split('-').reverse().join('/') : 'Data a definir';
+                select.innerHTML += `<option value="${f.id}">${f.nome} (${dataFmt})</option>`;
+            });
+
+            if(valAtual && appState.festas.some(f => f.id == valAtual)) {
+                select.value = valAtual;
+            } else if(festasOrdenadas.length > 0) {
+                select.value = festasOrdenadas[0].id;
+            }
+        }
+
+        function adicionarPresencaFesta(e) {
+            e.preventDefault();
+            const festaId = document.getElementById('pfFestaId').value;
+            if(!festaId) {
+                alert("Selecione uma festa para registrar a presença!");
+                return;
+            }
+
+            const nome = document.getElementById('pfNome').value;
+            const tel = document.getElementById('pfTel').value;
+
+            const festa = appState.festas.find(f => f.id == festaId);
             if(festa) {
                 if(!festa.presencas) festa.presencas = [];
                 festa.presencas.push({
                     id: Date.now(),
                     nome: nome,
-                    valor: valor
+                    tel: tel
                 });
+                
+                document.getElementById('pfNome').value = '';
+                document.getElementById('pfTel').value = '';
                 saveData();
             }
         }
 
         function removerPresencaFesta(festaId, presencaId) {
-            const festa = appState.festas.find(f => f.id === festaId);
+            const festa = appState.festas.find(f => f.id == festaId);
             if(festa && festa.presencas) {
                 festa.presencas = festa.presencas.filter(p => p.id !== presencaId);
                 saveData();
             }
         }
 
-        function adicionarDespesaFesta(festaId) {
-            const desc = prompt("Descrição da despesa (ex: Compra de Enfeites, Flores, Bebidas):");
+        function adicionarLancamentoFesta(festaId) {
+            const desc = prompt("Descrição do lançamento (ex: Doação Rifa, Compra de Flores):");
             if (!desc) return;
-            const valor = parseFloat(prompt("Valor da despesa (R$):", "0.00")) || 0;
+            const valor = parseFloat(prompt("Valor (R$):", "0.00")) || 0;
+            const tipo = confirm("Clique em OK para RECEITA (Doação/Arrecadação) ou CANCELAR para DESPESA (Custo/Compra):") ? 'Receita' : 'Despesa';
 
             const festa = appState.festas.find(f => f.id === festaId);
             if(festa) {
-                if(!festa.despesas) festa.despesas = [];
-                festa.despesas.push({
+                if(!festa.lancamentos) festa.lancamentos = [];
+                festa.lancamentos.push({
                     id: Date.now(),
                     desc: desc,
-                    valor: valor
+                    valor: valor,
+                    tipo: tipo
                 });
                 saveData();
             }
         }
 
-        function removerDespesaFesta(festaId, despesaId) {
+        function removerLancamentoFesta(festaId, lancId) {
             const festa = appState.festas.find(f => f.id === festaId);
-            if(festa && festa.despesas) {
-                festa.despesas = festa.despesas.filter(d => d.id !== despesaId);
+            if(festa && festa.lancamentos) {
+                festa.lancamentos = festa.lancamentos.filter(l => l.id !== lancId);
                 saveData();
             }
         }
 
         function renderFestas() {
+            popularSelectFestas();
             const container = document.getElementById('listaFestasContainer');
             container.innerHTML = '';
 
-            let totalArrecadadoGeral = 0;
-            let totalDespesasGeral = 0;
+            let totalArrecadado = 0;
+            let totalCustos = 0;
 
             if (appState.festas.length === 0) {
                 container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 15px;">Nenhuma festa cadastrada no momento.</p>';
             }
 
             appState.festas.forEach(festa => {
-                let arrecadadoEntradas = 0;
-                let despesasTotais = 0;
+                let arrecadado = 0;
+                let despesas = 0;
 
-                // Suporte para retrocompatibilidade
-                if (!festa.presencas) festa.presencas = [];
-                if (!festa.despesas) {
-                    festa.despesas = [];
-                    if (festa.lancamentos) {
-                        festa.lancamentos.forEach(l => {
-                            if (l.tipo === 'Despesa') festa.despesas.push(l);
-                            else if (l.tipo === 'Receita') festa.presencas.push({ id: l.id, nome: l.desc, valor: l.valor });
-                        });
-                        delete festa.lancamentos;
-                    }
-                }
+                (festa.lancamentos || []).forEach(l => {
+                    if(l.tipo === 'Receita') arrecadado += l.valor;
+                    else despesas += l.valor;
+                });
 
-                (festa.presencas || []).forEach(p => arrecadadoEntradas += (p.valor || 0));
-                (festa.despesas || []).forEach(d => despesasTotais += (d.valor || 0));
+                totalArrecadado += arrecadado;
+                totalCustos += despesas;
 
-                totalArrecadadoGeral += arrecadadoEntradas;
-                totalDespesasGeral += despesasTotais;
+                const saldo = arrecadado - despesas;
 
-                const saldo = arrecadadoEntradas - despesasTotais;
-
-                let presencasHtml = (festa.presencas || []).map((p, idx) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding: 5px 0; border-bottom: 1px dashed #eee;">
-                        <span><strong>#${idx + 1}</strong> ${p.nome}</span>
-                        <span>
-                            <strong style="color: var(--success-green);">R$ ${(p.valor || 0).toFixed(2)}</strong>
-                            <a href="#" onclick="removerPresencaFesta(${festa.id}, ${p.id})" style="color:red; text-decoration:none; margin-left:8px;">✕</a>
-                        </span>
+                let lancamentosHtml = (festa.lancamentos || []).map(l => `
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; padding: 4px 0; border-bottom: 1px dashed #eee;">
+                        <span>${l.tipo === 'Receita' ? '🟢' : '🔴'} ${l.desc}</span>
+                        <span><strong>R$ ${l.valor.toFixed(2)}</strong> <a href="#" onclick="removerLancamentoFesta(${festa.id}, ${l.id})" style="color:red; text-decoration:none; margin-left:8px;">✕</a></span>
                     </div>
                 `).join('');
 
-                let despesasHtml = (festa.despesas || []).map(d => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; padding: 5px 0; border-bottom: 1px dashed #eee;">
-                        <span>🔴 ${d.desc}</span>
-                        <span>
-                            <strong style="color: var(--danger-red);">R$ ${(d.valor || 0).toFixed(2)}</strong>
-                            <a href="#" onclick="removerDespesaFesta(${festa.id}, ${d.id})" style="color:red; text-decoration:none; margin-left:8px;">✕</a>
-                        </span>
-                    </div>
+                let presencasHtml = (festa.presencas || []).map((p, i) => `
+                    <tr style="font-size:0.85rem;">
+                        <td style="padding: 6px;"><strong>${i + 1}</strong></td>
+                        <td style="padding: 6px;">${p.nome}</td>
+                        <td style="padding: 6px;">${p.tel || '-'}</td>
+                        <td style="padding: 6px; text-align: right;"><a href="#" onclick="removerPresencaFesta(${festa.id}, ${p.id})" style="color:red; text-decoration:none;">Excluir</a></td>
+                    </tr>
                 `).join('');
 
                 container.innerHTML += `
@@ -1181,24 +1221,21 @@
                             <div>
                                 <span class="festa-title-text">${festa.nome}</span>
                                 ${festa.orixa ? `<span class="badge badge-orange" style="margin-left: 8px;">${festa.orixa}</span>` : ''}
-                                <div style="font-size:0.85rem; color: var(--text-dark); margin-top:3px;">
-                                    📅 Data: <strong>${festa.data ? festa.data.split('-').reverse().join('/') : 'A definir'}</strong> | 
-                                    ⏰ Horário: <strong>${festa.hora || 'Não informado'}</strong>
-                                </div>
+                                <div style="font-size:0.8rem; color: var(--text-muted);">Data: ${festa.data ? festa.data.split('-').reverse().join('/') : 'A definir'}</div>
                             </div>
                             <div>
                                 <button class="btn btn-danger btn-sm" onclick="removerFesta(${festa.id})">Excluir Festa</button>
                             </div>
                         </div>
 
-                        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 15px;">
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 10px;">
                             <div class="dash-card">
-                                <div class="title">Entradas / Total Arrecadado</div>
-                                <div class="value" style="font-size:1rem; color: var(--success-green);">R$ ${arrecadadoEntradas.toFixed(2)}</div>
+                                <div class="title">Arrecadado</div>
+                                <div class="value" style="font-size:1rem; color: var(--success-green);">R$ ${arrecadado.toFixed(2)}</div>
                             </div>
                             <div class="dash-card">
-                                <div class="title">Despesas Realizadas</div>
-                                <div class="value" style="font-size:1rem; color: var(--danger-red);">R$ ${despesasTotais.toFixed(2)}</div>
+                                <div class="title">Despesas</div>
+                                <div class="value" style="font-size:1rem; color: var(--danger-red);">R$ ${despesas.toFixed(2)}</div>
                             </div>
                             <div class="dash-card">
                                 <div class="title">Saldo do Evento</div>
@@ -1207,33 +1244,41 @@
                         </div>
 
                         <!-- LISTA DE PRESENÇA DA FESTA -->
-                        <div style="background:#f8faf8; border:1px solid #d8e6d8; padding: 12px; border-radius:6px; margin-bottom: 15px;">
-                            <strong style="font-size:0.9rem; color: var(--primary-green-dark); display:block; margin-bottom:8px;">
-                                📋 Lista de Presença da Festa (${(festa.presencas || []).length} Pessoas)
-                            </strong>
-                            <form onsubmit="adicionarPresencaFesta(event, ${festa.id})" style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
-                                <input type="text" id="festaNomePresenca_${festa.id}" class="form-control" style="flex:2; min-width:150px;" required placeholder="Nome do participante">
-                                <input type="number" step="0.01" id="festaValorPresenca_${festa.id}" class="form-control" style="flex:1; min-width:100px;" required placeholder="Valor Entrada (R$)">
-                                <button type="submit" class="btn btn-primary btn-sm">➕ Registrar Presença</button>
-                            </form>
-                            <div>${presencasHtml || '<span style="font-size:0.82rem; color:#888;">Nenhuma presença registrada nesta festa.</span>'}</div>
+                        <div style="background:#f9fbf9; border:1px solid #e0efe0; padding: 12px; border-radius:6px; margin-top: 10px; margin-bottom: 10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                                <strong style="font-size:0.9rem; color: var(--primary-green-dark);">📋 Lista de Presença de Convidados (${(festa.presencas || []).length} Registrados)</strong>
+                            </div>
+                            ${(festa.presencas || []).length > 0 ? `
+                                <div class="table-responsive">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th style="padding:6px;">#</th>
+                                                <th style="padding:6px;">Nome Convidado</th>
+                                                <th style="padding:6px;">Telefone / Contacto</th>
+                                                <th style="padding:6px; text-align:right;">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>${presencasHtml}</tbody>
+                                    </table>
+                                </div>
+                            ` : '<span style="font-size:0.82rem; color:#888;">Nenhum convidado confirmado nesta festa ainda.</span>'}
                         </div>
 
-                        <!-- DESPESAS DA FESTA -->
                         <div style="background:#fcfcfc; border:1px solid #eee; padding: 12px; border-radius:6px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                                <strong style="font-size:0.9rem; color: var(--danger-red);">💸 Despesas com a Festa</strong>
-                                <button class="btn btn-orange btn-sm" onclick="adicionarDespesaFesta(${festa.id})">➕ Lançar Despesa</button>
+                                <strong style="font-size:0.9rem;">💸 Lançamentos Financeiros (Doações e Gastos)</strong>
+                                <button class="btn btn-primary btn-sm" onclick="adicionarLancamentoFesta(${festa.id})">+ Adicionar Lançamento</button>
                             </div>
-                            <div>${despesasHtml || '<span style="font-size:0.82rem; color:#888;">Nenhuma despesa lançada neste evento.</span>'}</div>
+                            <div>${lancamentosHtml || '<span style="font-size:0.82rem; color:#888;">Nenhum lançamento cadastrado neste evento.</span>'}</div>
                         </div>
                     </div>
                 `;
             });
 
-            document.getElementById('dashFestaArrecadado').innerText = `R$ ${totalArrecadadoGeral.toFixed(2)}`;
-            document.getElementById('dashFestaCustos').innerText = `R$ ${totalDespesasGeral.toFixed(2)}`;
-            const saldoGeral = totalArrecadadoGeral - totalDespesasGeral;
+            document.getElementById('dashFestaArrecadado').innerText = `R$ ${totalArrecadado.toFixed(2)}`;
+            document.getElementById('dashFestaCustos').innerText = `R$ ${totalCustos.toFixed(2)}`;
+            const saldoGeral = totalArrecadado - totalCustos;
             const elSaldo = document.getElementById('dashFestaSaldo');
             elSaldo.innerText = `R$ ${saldoGeral.toFixed(2)}`;
             elSaldo.style.color = saldoGeral >= 0 ? 'var(--success-green)' : 'var(--danger-red)';
@@ -1318,29 +1363,21 @@
             renderMensalidades();
         }
 
-        function registrarPagamentoMensalidade(filhoId, mesChave) {
-            const hojeStr = new Date().toISOString().substring(0,10);
-            const dataTransferencia = prompt("Informe a data da transferência/pagamento (AAAA-MM-DD):", hojeStr);
-            if (!dataTransferencia) return;
-
+        function alterarStatusMensalidadeSelect(filhoId, mesChave, statusNovo) {
             if(!appState.mensalidades[mesChave]) {
                 appState.mensalidades[mesChave] = {};
             }
 
-            appState.mensalidades[mesChave][filhoId] = {
-                pago: true,
-                dataPagamento: dataTransferencia
-            };
-            saveData();
-        }
-
-        function cancelarPagamentoMensalidade(filhoId, mesChave) {
-            if (confirm("Deseja desfazer/remover o registro de pagamento deste filho?")) {
-                if (appState.mensalidades[mesChave] && appState.mensalidades[mesChave][filhoId]) {
-                    delete appState.mensalidades[mesChave][filhoId];
-                    saveData();
-                }
+            if(statusNovo === 'pago') {
+                const hojeStr = new Date().toISOString().substring(0,10);
+                appState.mensalidades[mesChave][filhoId] = {
+                    pago: true,
+                    dataPagamento: hojeStr
+                };
+            } else {
+                delete appState.mensalidades[mesChave][filhoId];
             }
+            saveData();
         }
 
         function renderMensalidades() {
@@ -1353,65 +1390,44 @@
 
             document.getElementById('lblMesSelecionadoNome').innerText = `${nomeMesExtenso} de ${anoStr}`;
 
-            const tbodyPagos = document.getElementById('tblMensalidadesPagos');
-            const tbodyPendentes = document.getElementById('tblMensalidadesPendentes');
-            tbodyPagos.innerHTML = '';
-            tbodyPendentes.innerHTML = '';
+            const tbodyUnificado = document.getElementById('tblMensalidadesUnificada');
+            tbodyUnificado.innerHTML = '';
 
             const statusMesAtivo = appState.mensalidades[mesChave] || {};
 
             let totalPrevisto = 0;
             let totalRecebido = 0;
             let totalPendente = 0;
-            let totalPagosCount = 0;
-            let totalPendentesCount = 0;
 
             if(appState.filhos.length === 0) {
-                tbodyPagos.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Nenhum filho de santo cadastrado.</td></tr>';
-                tbodyPendentes.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-muted);">Nenhum filho de santo cadastrado.</td></tr>';
+                tbodyUnificado.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Nenhum filho de santo cadastrado. Cadastre os filhos na aba "Filhos de Santo".</td></tr>';
             } else {
                 appState.filhos.forEach(f => {
                     const reg = statusMesAtivo[f.id];
-                    const pago = typeof reg === 'object' ? reg.pago : !!reg;
-                    const dataPgto = typeof reg === 'object' && reg.dataPagamento ? reg.dataPagamento.split('-').reverse().join('/') : 'Data não registrada';
-                    
+                    const estaPago = typeof reg === 'object' ? reg.pago : !!reg;
                     const valor = f.valor || 0;
+                    
                     totalPrevisto += valor;
-
-                    if (pago) {
+                    if (estaPago) {
                         totalRecebido += valor;
-                        totalPagosCount++;
-                        tbodyPagos.innerHTML += `
-                            <tr>
-                                <td><strong>${f.nome}</strong></td>
-                                <td>R$ ${valor.toFixed(2)}</td>
-                                <td>📅 ${dataPgto}</td>
-                                <td>
-                                    <button class="btn btn-secondary btn-sm" onclick="cancelarPagamentoMensalidade(${f.id}, '${mesChave}')">Desfazer</button>
-                                </td>
-                            </tr>
-                        `;
                     } else {
                         totalPendente += valor;
-                        totalPendentesCount++;
-                        tbodyPendentes.innerHTML += `
-                            <tr>
-                                <td><strong>${f.nome}</strong></td>
-                                <td>R$ ${valor.toFixed(2)}</td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm" onclick="registrarPagamentoMensalidade(${f.id}, '${mesChave}')">💵 Dar Baixa / Transferiu</button>
-                                </td>
-                            </tr>
-                        `;
                     }
-                });
 
-                if (totalPagosCount === 0) {
-                    tbodyPagos.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Nenhum pagamento efetuado neste mês até o momento.</td></tr>';
-                }
-                if (totalPendentesCount === 0) {
-                    tbodyPendentes.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--success-green); font-weight:bold;">🎉 Todos os filhos de santo já efetuaram o pagamento!</td></tr>';
-                }
+                    tbodyUnificado.innerHTML += `
+                        <tr>
+                            <td><strong>${f.nome}</strong></td>
+                            <td>${f.tel || '-'}</td>
+                            <td><strong>R$ ${valor.toFixed(2)}</strong></td>
+                            <td>
+                                <select class="select-status-pago ${estaPago ? 'pago' : 'pendente'}" onchange="alterarStatusMensalidadeSelect(${f.id}, '${mesChave}', this.value)">
+                                    <option value="pago" ${estaPago ? 'selected' : ''}>✅ Pago</option>
+                                    <option value="pendente" ${!estaPago ? 'selected' : ''}>⏳ Pendente</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
 
             document.getElementById('dashMensalidadePrevisto').innerText = `R$ ${totalPrevisto.toFixed(2)}`;
@@ -1514,7 +1530,7 @@
                     if(imported && typeof imported === 'object') {
                         appState = imported;
                         if (!appState.girasSemanais) appState.girasSemanais = [];
-                        if (!appState.filhos && imported.filhas) appState.filhos = loaded.filhas;
+                        if (!appState.filhos && imported.filhas) appState.filhos = imported.filhas;
                         if (!appState.filhos) appState.filhos = [];
                         if (!appState.consulentes) appState.consulentes = [];
                         if (!appState.mensalidades) appState.mensalidades = {};
@@ -1526,6 +1542,7 @@
                 } catch(err) {
                     alert("Erro ao ler o arquivo de backup.");
                 }
+                event.target.value = '';
             };
             reader.readAsText(event.target.files[0]);
         }
