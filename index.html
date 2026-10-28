@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Axé — Tenda Espírita Raio de Iansã e Cabocla Jupira</title>
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --primary-green-light: #4caf50;
+            --primary-green-dark: #1b5e20;
+            --accent-orange: #f57c00;
+            --accent-orange-light: #ffb74d;
+            --bg-light: #f4f7f4;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --border-color: #e0e0e0;
+            --danger-red: #d32f2f;
+            --warning-yellow: #fbc02d;
+            --success-green: #388e3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-green-dark), var(--primary-green));
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .custom-logo {
+            width: 46px;
+            height: 46px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .custom-logo svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .header-title h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .header-title p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            color: var(--accent-orange-light);
+        }
+
+        .backup-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-header {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .btn-header:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 68px;
+            z-index: 999;
+        }
+
+        .nav-tabs {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 12px 18px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+            background: #f0f7f0;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            border: 1px solid #e8eee8;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: var(--primary-green-dark);
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0efe0;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-green);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-green-dark);
+        }
+
+        .btn-orange {
+            background-color: var(--accent-orange);
+            color: white;
+        }
+
+        .btn-orange:hover {
+            background-color: #e65100;
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: var(--text-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            color: white;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #e8f5e9;
+            color: var(--primary-green-dark);
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+        }
+
+        .badge-green { background-color: var(--success-green); }
+        .badge-orange { background-color: var(--accent-orange); }
+        .badge-red { background-color: var(--danger-red); }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .dash-card {
+            background: #f8faf8;
+            border: 1px solid #d8e6d8;
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+
+        .dash-card .title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .dash-card .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-green-dark);
+        }
+
+        .festa-item-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .festa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .festa-title-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-green-dark);
+        }
+
+        .gira-summary-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-mes-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f0f7f0;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .backup-controls {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .nav-mes-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="custom-logo">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#2e7d32" stroke-width="7"/>
+                        <path d="M 52 18 L 28 50 L 46 50 L 40 82 L 72 44 L 52 44 Z" fill="#f57c00"/>
+                    </svg>
+                </div>
+                <div class="header-title">
+                    <h1>Gestão Axé</h1>
+                    <p>T.E. Raio de Iansã e Cabocla Jupira</p>
+                </div>
+            </div>
+            <div class="backup-controls">
+                <button class="btn-header" onclick="exportData()">💾 Salvar Backup</button>
+                <button class="btn-header" onclick="importData()">📂 Abrir Backup</button>
+                <input type="file" id="fileInput" style="display:none" onchange="handleFileSelect(event)">
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'giras')">📅 Giras Semanais</button>
+            <button class="tab-btn" onclick="switchTab(event, 'filas')">📖 Presença na Gira</button>
+            <button class="tab-btn" onclick="switchTab(event, 'festas')">🎉 Festas & Eventos</button>
+            <button class="tab-btn" onclick="switchTab(event, 'filhos')">🌿 Filhos de Santo</button>
+            <button class="tab-btn" onclick="switchTab(event, 'mensalidades')">💰 Mensalidades</button>
+            <button class="tab-btn" onclick="switchTab(event, 'estoque')">📦 Estoque & Insumos</button>
+        </div>
+    </nav>
+
+    <main>
+        <!-- ABA 0: GIRAS SEMANAIS -->
+        <div id="giras" class="tab-content active">
+            <div class="card">
+                <div class="card-title">Cadastrar / Agendar Gira Semanal</div>
+                <form id="formGira" class="form-grid" onsubmit="adicionarGiraSemanal(event)">
+                    <div class="form-group">
+                        <label>Nome / Linha da Gira</label>
+                        <input type="text" id="giraNome" class="form-control" required placeholder="Ex: Gira de Preto Velho / Gira de Baianos">
+                    </div>
+                    <div class="form-group">
+                        <label>Data da Gira</label>
+                        <input type="date" id="giraData" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário de Início</label>
+                        <input type="time" id="giraHora" class="form-control" value="20:00">
+                    </div>
+                    <div class="form-group">
+                        <label>Dirigente / Observação (Opcional)</label>
+                        <input type="text" id="giraObs" class="form-control" placeholder="Ex: Passe e Amaci">
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">➕ Cadastrar Gira</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Calendário e Programação de Giras</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Gira / Linha</th>
+                                <th>Observações</th>
+                                <th>Presentes Registrados</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblGirasSemanais"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 1: PRESENÇA NA GIRA -->
+        <div id="filas" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>Registar Presença de Visitante / Consulente</span>
+                </div>
+                <form id="formConsulente" class="form-grid" onsubmit="adicionarConsulente(event)">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Selecione a Gira *</label>
+                        <select id="cGiraId" class="form-control" required onchange="aoMudarGiraPresenca()">
+                            <option value="">-- Selecione uma Gira Cadastrada --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Visitante *</label>
+                        <input type="text" id="cNome" class="form-control" required placeholder="Ex: Maria da Silva">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp (Opcional)</label>
+                        <input type="text" id="cTel" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Presença / Atendimento</label>
+                        <select id="cTipo" class="form-control">
+                            <option value="Consulta">Consulta</option>
+                            <option value="Passe">Passe</option>
+                            <option value="Prioritário">Atendimento Prioritário</option>
+                            <option value="Visitante">Apenas Visitante / Assistência</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">✍️ Registar Presença</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span>Livro de Visitas — <strong id="lblGiraSelecionadaNome">Selecione uma Gira acima</strong></span>
+                    <span id="badgeTotalGira" class="badge badge-green" style="font-size: 0.9rem;">0 Pessoas Presentes</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome do Visitante</th>
+                                <th>Telefone / Contacto</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblPresencaGira"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Histórico e Resumo de Presenças por Gira</div>
+                <div id="historicoGirasContainer"></div>
+            </div>
+        </div>
+
+        <!-- ABA 2: FESTAS & EVENTOS -->
+        <div id="festas" class="tab-content">
+            <div class="card">
+                <div class="card-title">Registar Nova Festa / Homenagem</div>
+                <form id="formFesta" class="form-grid" onsubmit="adicionarFesta(event)">
+                    <div class="form-group">
+                        <label>Nome da Festa / Evento</label>
+                        <input type="text" id="festaNome" class="form-control" required placeholder="Ex: Festa de Cosme e Damião">
+                    </div>
+                    <div class="form-group">
+                        <label>Orixá / Entidade Homenageada</label>
+                        <input type="text" id="festaOrixa" class="form-control" placeholder="Ex: Erês / Iansã / Ciganos">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Prevista</label>
+                        <input type="date" id="festaData" class="form-control" required>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">🎉 Cadastrar Festa</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Resumo Financeiro dos Eventos</div>
+                <div class="dashboard-grid">
+                    <div class="dash-card">
+                        <div class="title">Total Arrecadado (Doações/Rifas)</div>
+                        <div class="value" id="dashFestaArrecadado" style="color: var(--success-green);">R$ 0,00</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="title">Despesas Realizadas</div>
+                        <div class="value" id="dashFestaCustos" style="color: var(--danger-red);">R$ 0,00</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="title">Saldo Geral dos Eventos</div>
+                        <div class="value" id="dashFestaSaldo">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Festas e Homenagens Agendadas</div>
+                <div id="listaFestasContainer"></div>
+            </div>
+        </div>
+
+        <!-- ABA 3: FILHOS DE SANTO -->
+        <div id="filhos" class="tab-content">
+            <div class="card">
+                <div class="card-title">Cadastrar Filho de Santo</div>
+                <form id="formFilho" class="form-grid" onsubmit="adicionarFilho(event)">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="fNome" class="form-control" required placeholder="Ex: João de Ogum">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="text" id="fTel" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>Mensalidade (R$)</label>
+                        <input type="number" id="fValor" class="form-control" value="50">
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">Cadastrar Filho</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Corrente da Casa</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Valor Mensal</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblFilhos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: MENSALIDADES (FOCO NO MÊS VIGENTE / SELEÇÃO DE OUTROS MESES) -->
+        <div id="mensalidades" class="tab-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>Controle Financeiro da Corrente</span>
+                    <button class="btn btn-orange btn-sm" onclick="irParaMesAtual()">📅 Ir para Mês Vigente</button>
+                </div>
+
+                <!-- Barra de Navegação Entre Meses -->
+                <div class="nav-mes-bar">
+                    <button class="btn btn-secondary btn-sm" onclick="navegarMes(-1)">◀ Mês Anterior</button>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.85rem; font-weight: 600;">Selecione o Mês / Ano:</label>
+                        <input type="month" id="mesRefSelect" class="form-control" style="width: auto; padding: 6px 12px; font-weight: bold;" onchange="aoMudarMesSelect()">
+                    </div>
+
+                    <button class="btn btn-secondary btn-sm" onclick="navegarMes(1)">Próximo Mês ▶</button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dash-card">
+                        <div class="title">Total Previsto (<span id="lblMesSelecionadoNome">Mês Vigente</span>)</div>
+                        <div class="value" id="dashMensalidadePrevisto">R$ 0,00</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="title">Total Arrecadado / Pago</div>
+                        <div class="value" id="dashMensalidadeRecebido" style="color: var(--success-green);">R$ 0,00</div>
+                    </div>
+                    <div class="dash-card">
+                        <div class="title">Total Pendente</div>
+                        <div class="value" id="dashMensalidadePendente" style="color: var(--danger-red);">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Filho de Santo</th>
+                                <th>Valor Mensal</th>
+                                <th>Status do Mês</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblMensalidades"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 5: ESTOQUE -->
+        <div id="estoque" class="tab-content">
+            <div class="card">
+                <div class="card-title">Novo Item no Estoque</div>
+                <form id="formEstoque" class="form-grid" onsubmit="adicionarItemEstoque(event)">
+                    <div class="form-group">
+                        <label>Nome do Insumo</label>
+                        <input type="text" id="eNome" class="form-control" required placeholder="Ex: Vela Branca 7 Dias">
+                    </div>
+                    <div class="form-group">
+                        <label>Qtd. Atual</label>
+                        <input type="number" id="eQtd" class="form-control" required value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Qtd. Mínima (Alerta)</label>
+                        <input type="number" id="eMin" class="form-control" required value="3">
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary">Salvar Item</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Itens e Materiais do Terreiro</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Qtd. Atual</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblEstoque"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let appState = {
+            girasSemanais: [], 
+            filhos: [],
+            consulentes: [], 
+            mensalidades: {}, 
+            estoque: [],
+            festas: [] 
+        };
+
+        const NOMES_MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        window.onload = function() {
+            const saved = localStorage.getItem('gestao_axe_data');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    appState = loaded;
+                    if (!appState.girasSemanais) appState.girasSemanais = [];
+                    if (!appState.filhos && loaded.filhas) appState.filhos = loaded.filhas;
+                    if (!appState.filhos) appState.filhos = [];
+                    if (!appState.consulentes) appState.consulentes = [];
+                    if (!appState.mensalidades) appState.mensalidades = {};
+                    if (!appState.estoque) appState.estoque = [];
+                    if (!appState.festas) appState.festas = [];
+                } catch(e) {
+                    console.error("Erro ao carregar dados locais", e);
+                }
+            }
+            
+            // Define por padrão o Mês Vigente (Ano-Mês)
+            irParaMesAtual();
+            document.getElementById('giraData').value = new Date().toISOString().substring(0,10);
+            
+            renderAll();
+        };
+
+        function saveData() {
+            localStorage.setItem('gestao_axe_data', JSON.stringify(appState));
+            renderAll();
+        }
+
+        function renderAll() {
+            renderGirasSemanais();
+            popularSelectGiras();
+            renderConsulentes();
+            renderFestas();
+            renderFilhos();
+            renderMensalidades();
+            renderEstoque();
+        }
+
+        function switchTab(evt, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if(evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
+        }
+
+        /* --- LOGICA: GIRAS SEMANAIS --- */
+        function adicionarGiraSemanal(e) {
+            e.preventDefault();
+            const nome = document.getElementById('giraNome').value;
+            const data = document.getElementById('giraData').value;
+            const hora = document.getElementById('giraHora').value;
+            const obs = document.getElementById('giraObs').value;
+
+            const novaGira = {
+                id: Date.now(),
+                nome: nome,
+                data: data,
+                hora: hora,
+                obs: obs
+            };
+
+            appState.girasSemanais.push(novaGira);
+
+            document.getElementById('giraNome').value = '';
+            document.getElementById('giraObs').value = '';
+            saveData();
+            
+            document.getElementById('cGiraId').value = novaGira.id;
+            renderConsulentes();
+        }
+
+        function removerGiraSemanal(id) {
+            if(confirm("Tem certeza que deseja remover esta gira? Os registros de presença vinculados a ela serão mantidos.")) {
+                appState.girasSemanais = appState.girasSemanais.filter(g => g.id !== id);
+                saveData();
+            }
+        }
+
+        function renderGirasSemanais() {
+            const tbody = document.getElementById('tblGirasSemanais');
+            tbody.innerHTML = '';
+
+            const girasOrdenadas = [...appState.girasSemanais].sort((a,b) => b.data.localeCompare(a.data));
+
+            if(girasOrdenadas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhuma gira cadastrada. Agende a primeira gira no formulário acima!</td></tr>';
+                return;
+            }
+
+            girasOrdenadas.forEach(gira => {
+                const dataFmt = gira.data ? gira.data.split('-').reverse().join('/') : '--/--/----';
+                const totalPresentes = appState.consulentes.filter(c => c.giraId == gira.id).length;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${dataFmt}</strong></td>
+                        <td>${gira.hora || '--:--'}</td>
+                        <td><strong>${gira.nome}</strong></td>
+                        <td>${gira.obs || '-'}</td>
+                        <td><span class="badge badge-green">${totalPresentes} Pessoas</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="irParaPresencaGira(${gira.id})">📝 Dar Presenças</button>
+                            <button class="btn btn-danger btn-sm" onclick="removerGiraSemanal(${gira.id})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function irParaPresencaGira(giraId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('filas').classList.add('active');
+            const btns = document.querySelectorAll('.tab-btn');
+            if(btns[1]) btns[1].classList.add('active');
+
+            document.getElementById('cGiraId').value = giraId;
+            renderConsulentes();
+        }
+
+        function popularSelectGiras() {
+            const select = document.getElementById('cGiraId');
+            const valAtual = select.value;
+            select.innerHTML = '<option value="">-- Selecione uma Gira Cadastrada --</option>';
+
+            const girasOrdenadas = [...appState.girasSemanais].sort((a,b) => b.data.localeCompare(a.data));
+
+            girasOrdenadas.forEach(g => {
+                const dataFmt = g.data ? g.data.split('-').reverse().join('/') : '';
+                select.innerHTML += `<option value="${g.id}">${dataFmt} — ${g.nome} (${g.hora || ''})</option>`;
+            });
+
+            if(valAtual && appState.girasSemanais.some(g => g.id == valAtual)) {
+                select.value = valAtual;
+            } else if(girasOrdenadas.length > 0) {
+                select.value = girasOrdenadas[0].id;
+            }
+        }
+
+        /* --- LOGICA: PRESENÇA NA GIRA --- */
+        function aoMudarGiraPresenca() {
+            renderConsulentes();
+        }
+
+        function adicionarConsulente(e) {
+            e.preventDefault();
+            const giraId = document.getElementById('cGiraId').value;
+            if(!giraId) {
+                alert("Por favor, selecione uma Gira no menu suspenso!");
+                return;
+            }
+
+            const nome = document.getElementById('cNome').value;
+            const tel = document.getElementById('cTel').value;
+            const tipo = document.getElementById('cTipo').value;
+            
+            appState.consulentes.push({
+                id: Date.now(),
+                giraId: giraId,
+                nome: nome,
+                tel: tel,
+                tipo: tipo
+            });
+
+            document.getElementById('cNome').value = '';
+            document.getElementById('cTel').value = '';
+            saveData();
+        }
+
+        function removerConsulente(id) {
+            if(confirm("Remover este visitante do livro de presenças?")) {
+                appState.consulentes = appState.consulentes.filter(x => x.id !== id);
+                saveData();
+            }
+        }
+
+        function renderConsulentes() {
+            const giraId = document.getElementById('cGiraId').value;
+            const tbody = document.getElementById('tblPresencaGira');
+            tbody.innerHTML = '';
+
+            const giraAtual = appState.girasSemanais.find(g => g.id == giraId);
+
+            if (giraAtual) {
+                const dataFmt = giraAtual.data ? giraAtual.data.split('-').reverse().join('/') : '';
+                document.getElementById('lblGiraSelecionadaNome').innerText = `${giraAtual.nome} (${dataFmt})`;
+            } else {
+                document.getElementById('lblGiraSelecionadaNome').innerText = 'Nenhuma Gira Selecionada';
+            }
+
+            const visitantesDaGira = appState.consulentes.filter(c => c.giraId == giraId);
+
+            if(visitantesDaGira.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Nenhuma presença registrada para esta gira ainda.</td></tr>';
+            } else {
+                visitantesDaGira.forEach((c, idx) => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${idx + 1}</strong></td>
+                            <td>${c.nome}</td>
+                            <td>${c.tel || '-'}</td>
+                            <td><span class="badge badge-orange">${c.tipo}</span></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="removerConsulente(${c.id})">Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('badgeTotalGira').innerText = `${visitantesDaGira.length} Pessoas Presentes`;
+
+            // Renderizar Histórico por Gira
+            const historicoContainer = document.getElementById('historicoGirasContainer');
+            historicoContainer.innerHTML = '';
+
+            const girasOrdenadas = [...appState.girasSemanais].sort((a,b) => b.data.localeCompare(a.data));
+
+            if(girasOrdenadas.length === 0) {
+                historicoContainer.innerHTML = '<p style="color: var(--text-muted); font-size:0.9rem;">Cadastre as giras da casa na aba "Giras Semanais".</p>';
+            }
+
+            girasOrdenadas.forEach(gira => {
+                const dataFmt = gira.data ? gira.data.split('-').reverse().join('/') : '';
+                const total = appState.consulentes.filter(c => c.giraId == gira.id).length;
+                const ativa = (gira.id == giraId);
+
+                historicoContainer.innerHTML += `
+                    <div class="gira-summary-card" style="${ativa ? 'border-left: 4px solid var(--primary-green); background:#f0f7f0;' : ''}">
+                        <div>
+                            <strong>${gira.nome} — ${dataFmt}</strong>
+                            <div style="font-size:0.85rem; color: var(--text-muted);">${total} ${total === 1 ? 'pessoa registrada' : 'pessoas registradas'}</div>
+                        </div>
+                        <button class="btn ${ativa ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="irParaPresencaGira(${gira.id})">
+                            ${ativa ? '✓ Selecionada' : 'Ver / Dar Presenças'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        /* --- LOGICA: FESTAS & EVENTOS --- */
+        function adicionarFesta(e) {
+            e.preventDefault();
+            const nome = document.getElementById('festaNome').value;
+            const orixa = document.getElementById('festaOrixa').value;
+            const data = document.getElementById('festaData').value;
+
+            appState.festas.push({
+                id: Date.now(),
+                nome: nome,
+                orixa: orixa,
+                data: data,
+                lancamentos: []
+            });
+
+            document.getElementById('festaNome').value = '';
+            document.getElementById('festaOrixa').value = '';
+            saveData();
+        }
+
+        function removerFesta(id) {
+            if(confirm("Deseja mesmo remover esta festa e todo seu histórico financeiro?")) {
+                appState.festas = appState.festas.filter(x => x.id !== id);
+                saveData();
+            }
+        }
+
+        function adicionarLancamentoFesta(festaId) {
+            const desc = prompt("Descrição do lançamento (ex: Doação Rifa, Compra de Flores):");
+            if (!desc) return;
+            const valor = parseFloat(prompt("Valor (R$):", "0.00")) || 0;
+            const tipo = confirm("Clique em OK para RECEITA (Doação/Arrecadação) ou CANCELAR para DESPESA (Custo/Compra):") ? 'Receita' : 'Despesa';
+
+            const festa = appState.festas.find(f => f.id === festaId);
+            if(festa) {
+                if(!festa.lancamentos) festa.lancamentos = [];
+                festa.lancamentos.push({
+                    id: Date.now(),
+                    desc: desc,
+                    valor: valor,
+                    tipo: tipo
+                });
+                saveData();
+            }
+        }
+
+        function removerLancamentoFesta(festaId, lancId) {
+            const festa = appState.festas.find(f => f.id === festaId);
+            if(festa && festa.lancamentos) {
+                festa.lancamentos = festa.lancamentos.filter(l => l.id !== lancId);
+                saveData();
+            }
+        }
+
+        function renderFestas() {
+            const container = document.getElementById('listaFestasContainer');
+            container.innerHTML = '';
+
+            let totalArrecadado = 0;
+            let totalCustos = 0;
+
+            if (appState.festas.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 15px;">Nenhuma festa cadastrada no momento.</p>';
+            }
+
+            appState.festas.forEach(festa => {
+                let arrecadado = 0;
+                let despesas = 0;
+
+                (festa.lancamentos || []).forEach(l => {
+                    if(l.tipo === 'Receita') arrecadado += l.valor;
+                    else despesas += l.valor;
+                });
+
+                totalArrecadado += arrecadado;
+                totalCustos += despesas;
+
+                const saldo = arrecadado - despesas;
+
+                let lancamentosHtml = (festa.lancamentos || []).map(l => `
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; padding: 4px 0; border-bottom: 1px dashed #eee;">
+                        <span>${l.tipo === 'Receita' ? '🟢' : '🔴'} ${l.desc}</span>
+                        <span><strong>R$ ${l.valor.toFixed(2)}</strong> <a href="#" onclick="removerLancamentoFesta(${festa.id}, ${l.id})" style="color:red; text-decoration:none; margin-left:8px;">✕</a></span>
+                    </div>
+                `).join('');
+
+                container.innerHTML += `
+                    <div class="festa-item-card">
+                        <div class="festa-header">
+                            <div>
+                                <span class="festa-title-text">${festa.nome}</span>
+                                ${festa.orixa ? `<span class="badge badge-orange" style="margin-left: 8px;">${festa.orixa}</span>` : ''}
+                                <div style="font-size:0.8rem; color: var(--text-muted);">Data: ${festa.data ? festa.data.split('-').reverse().join('/') : 'A definir'}</div>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger btn-sm" onclick="removerFesta(${festa.id})">Excluir Festa</button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 10px;">
+                            <div class="dash-card">
+                                <div class="title">Arrecadado</div>
+                                <div class="value" style="font-size:1rem; color: var(--success-green);">R$ ${arrecadado.toFixed(2)}</div>
+                            </div>
+                            <div class="dash-card">
+                                <div class="title">Despesas</div>
+                                <div class="value" style="font-size:1rem; color: var(--danger-red);">R$ ${despesas.toFixed(2)}</div>
+                            </div>
+                            <div class="dash-card">
+                                <div class="title">Saldo do Evento</div>
+                                <div class="value" style="font-size:1rem; color: ${saldo >= 0 ? 'var(--success-green)' : 'var(--danger-red)'};">R$ ${saldo.toFixed(2)}</div>
+                            </div>
+                        </div>
+
+                        <div style="background:#fcfcfc; border:1px solid #eee; padding: 12px; border-radius:6px; margin-top: 10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                                <strong style="font-size:0.9rem;">💸 Lançamentos Financeiros (Doações e Gastos)</strong>
+                                <button class="btn btn-primary btn-sm" onclick="adicionarLancamentoFesta(${festa.id})">+ Adicionar Lançamento</button>
+                            </div>
+                            <div>${lancamentosHtml || '<span style="font-size:0.82rem; color:#888;">Nenhum lançamento cadastrado neste evento.</span>'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('dashFestaArrecadado').innerText = `R$ ${totalArrecadado.toFixed(2)}`;
+            document.getElementById('dashFestaCustos').innerText = `R$ ${totalCustos.toFixed(2)}`;
+            const saldoGeral = totalArrecadado - totalCustos;
+            const elSaldo = document.getElementById('dashFestaSaldo');
+            elSaldo.innerText = `R$ ${saldoGeral.toFixed(2)}`;
+            elSaldo.style.color = saldoGeral >= 0 ? 'var(--success-green)' : 'var(--danger-red)';
+        }
+
+        /* --- LOGICA: FILHOS DE SANTO --- */
+        function adicionarFilho(e) {
+            e.preventDefault();
+            const nome = document.getElementById('fNome').value;
+            const tel = document.getElementById('fTel').value;
+            const valor = parseFloat(document.getElementById('fValor').value) || 0;
+
+            appState.filhos.push({
+                id: Date.now(),
+                nome: nome,
+                tel: tel,
+                valor: valor
+            });
+
+            document.getElementById('fNome').value = '';
+            document.getElementById('fTel').value = '';
+            saveData();
+        }
+
+        function removerFilho(id) {
+            if(confirm("Remover este filho de santo da lista?")) {
+                appState.filhos = appState.filhos.filter(x => x.id !== id);
+                saveData();
+            }
+        }
+
+        function renderFilhos() {
+            const tbody = document.getElementById('tblFilhos');
+            tbody.innerHTML = '';
+            appState.filhos.forEach(f => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${f.nome}</strong></td>
+                        <td>${f.tel || '-'}</td>
+                        <td>R$ ${f.valor.toFixed(2)}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="removerFilho(${f.id})">Excluir</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* --- LOGICA: MENSALIDADES (MÊS VIGENTE + NAVEGAÇÃO DE MESES) --- */
+        function irParaMesAtual() {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            document.getElementById('mesRefSelect').value = `${ano}-${mes}`;
+            renderMensalidades();
+        }
+
+        function aoMudarMesSelect() {
+            renderMensalidades();
+        }
+
+        function navegarMes(delta) {
+            const val = document.getElementById('mesRefSelect').value;
+            if(!val) return;
+            const [anoStr, mesStr] = val.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr) + delta;
+
+            if (mes > 12) {
+                mes = 1;
+                ano++;
+            } else if (mes < 1) {
+                mes = 12;
+                ano--;
+            }
+
+            const mFmt = String(mes).padStart(2, '0');
+            document.getElementById('mesRefSelect').value = `${ano}-${mFmt}`;
+            renderMensalidades();
+        }
+
+        function toggleMensalidade(filhoId, mesChave) {
+            if(!appState.mensalidades[mesChave]) {
+                appState.mensalidades[mesChave] = {};
+            }
+            appState.mensalidades[mesChave][filhoId] = !appState.mensalidades[mesChave][filhoId];
+            saveData();
+        }
+
+        function renderMensalidades() {
+            const mesChave = document.getElementById('mesRefSelect').value;
+            if(!mesChave) return;
+
+            const [anoStr, mesStr] = mesChave.split('-');
+            const numMes = parseInt(mesStr);
+            const nomeMesExtenso = NOMES_MESES[numMes - 1];
+
+            document.getElementById('lblMesSelecionadoNome').innerText = `${nomeMesExtenso} de ${anoStr}`;
+
+            const tbody = document.getElementById('tblMensalidades');
+            tbody.innerHTML = '';
+
+            const statusMesAtivo = appState.mensalidades[mesChave] || {};
+
+            let totalPrevisto = 0;
+            let totalRecebido = 0;
+            let totalPendente = 0;
+
+            if(appState.filhos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Nenhum filho de santo cadastrado na corrente.</td></tr>';
+            } else {
+                appState.filhos.forEach(f => {
+                    const pago = !!statusMesAtivo[f.id];
+                    const valor = f.valor || 0;
+                    totalPrevisto += valor;
+
+                    if (pago) {
+                        totalRecebido += valor;
+                    } else {
+                        totalPendente += valor;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${f.nome}</strong></td>
+                            <td>R$ ${valor.toFixed(2)}</td>
+                            <td>
+                                <span class="badge ${pago ? 'badge-green' : 'badge-red'}">
+                                    ${pago ? 'PAGO' : 'PENDENTE'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm ${pago ? 'btn-secondary' : 'btn-primary'}" onclick="toggleMensalidade(${f.id}, '${mesChave}')">
+                                    ${pago ? 'Marcar Pendente' : 'Confirmar Pgto'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('dashMensalidadePrevisto').innerText = `R$ ${totalPrevisto.toFixed(2)}`;
+            document.getElementById('dashMensalidadeRecebido').innerText = `R$ ${totalRecebido.toFixed(2)}`;
+            document.getElementById('dashMensalidadePendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
+        }
+
+        /* --- LOGICA: ESTOQUE --- */
+        function adicionarItemEstoque(e) {
+            e.preventDefault();
+            const nome = document.getElementById('eNome').value;
+            const qtd = parseInt(document.getElementById('eQtd').value) || 0;
+            const min = parseInt(document.getElementById('eMin').value) || 0;
+
+            appState.estoque.push({
+                id: Date.now(),
+                nome: nome,
+                qtd: qtd,
+                min: min
+            });
+
+            document.getElementById('eNome').value = '';
+            saveData();
+        }
+
+        function alterarQtdEstoque(id, delta) {
+            const item = appState.estoque.find(x => x.id === id);
+            if(item) {
+                item.qtd = Math.max(0, item.qtd + delta);
+                saveData();
+            }
+        }
+
+        function removerItemEstoque(id) {
+            if(confirm("Deseja realmente apagar este item do estoque?")) {
+                appState.estoque = appState.estoque.filter(x => x.id !== id);
+                saveData();
+            }
+        }
+
+        function renderEstoque() {
+            const tbody = document.getElementById('tblEstoque');
+            tbody.innerHTML = '';
+
+            appState.estoque.forEach(i => {
+                const alerta = i.qtd <= i.min;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${i.nome}</strong></td>
+                        <td>${i.qtd} unidades</td>
+                        <td>
+                            <span class="badge ${alerta ? 'badge-red' : 'badge-green'}">
+                                ${alerta ? 'Estoque Baixo' : 'OK'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" onclick="alterarQtdEstoque(${i.id}, -1)">-1</button>
+                            <button class="btn btn-secondary btn-sm" onclick="alterarQtdEstoque(${i.id}, 1)">+1</button>
+                            <button class="btn btn-danger btn-sm" onclick="removerItemEstoque(${i.id})" style="margin-left: 5px;">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        /* --- BACKUP & RESTAURAÇÃO --- */
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `GestaoAxe_Backup_${new Date().toISOString().substring(0,10)}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        function importData() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileSelect(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(imported && typeof imported === 'object') {
+                        appState = imported;
+                        if (!appState.girasSemanais) appState.girasSemanais = [];
+                        if (!appState.filhos && imported.filhas) appState.filhos = loaded.filhas;
+                        if (!appState.filhos) appState.filhos = [];
+                        if (!appState.consulentes) appState.consulentes = [];
+                        if (!appState.mensalidades) appState.mensalidades = {};
+                        if (!appState.estoque) appState.estoque = [];
+                        if (!appState.festas) appState.festas = [];
+                        saveData();
+                        alert("Backup restaurado com sucesso!");
+                    }
+                } catch(err) {
+                    alert("Erro ao ler o arquivo de backup.");
+                }
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
